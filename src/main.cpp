@@ -59,8 +59,6 @@ void autonomous() {}
  */
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	
-
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
@@ -71,6 +69,7 @@ void opcontrol() {
 		// int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
 		// left_mg.move(dir - turn);                      // Sets left motor voltage
 		// right_mg.move(dir + turn);                     // Sets right motor voltage
+		pros::lcd::print(2, "%lf", Strafe.get_value());
 		pros::delay(20);                               // Run for 20 ms then update
 	}
 }
