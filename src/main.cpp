@@ -11,6 +11,7 @@
  */
 void initialize() {
 	pros::lcd::initialize();
+	Strafe.reset();
 }
 
 /**
