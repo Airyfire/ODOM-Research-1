@@ -21,10 +21,9 @@ void opcontrol() {
 		
 ////////////////////////////////////////////////////////////////
 		//Odom test
-		pros::lcd::print(1, "%lf", Lateral.get_value());
-		pros::lcd::print(2, "%lf", Strafe.get_value());
+		pros::lcd::print(1, "Lateral: %d, Strafe: %d", Lateral.get_value(), Strafe.get_value());
 ////////////////////////////////////////////////////////////////
-		odomtask();
+		pros::lcd::print(2, "X: %f, Y: %f, Theta: %f", x_pos, y_pos, theta);
 		pros::delay(20);
 	}
 }

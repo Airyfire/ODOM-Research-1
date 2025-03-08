@@ -17,32 +17,36 @@ double ticksToInches(double ticks) {
 
 // odom task
 void odomtask(){
-    double prev_lat_ticks, prev_strafe_ticks = 0;
-
-    //current sensor values
-    double lat_ticks = Lateral.get_value();
-    double strafe_ticks = Strafe.get_value();
-    double final_theta = inertial_sensor.get_yaw();
+    //initializing variables
+    double lat_ticks = 0;
+    double strafe_ticks = 0;
+    double final_theta = 0;
 
     //conversion to inches
-    double delta_y = ticksToInches(lat_ticks - prev_lat_ticks);
-    double delta_x = ticksToInches(strafe_ticks - prev_strafe_ticks);
+    double delta_y = 0;
+    double delta_x = 0;
     
     //change in heading in radians
-    double delta_theta = (final_theta - theta) * RADIANS;
+    double delta_theta = 0;
 
-    double global_x = delta_x * cos(theta + delta_theta/2) - delta_y * sin(theta + delta_theta/2);
-    double global_y = delta_x * sin(theta + delta_theta/2) + delta_y * cos(theta + delta_theta/2);
+    while (true) {
+        //get current sensor values
+        lat_ticks = Lateral.get_value();
+        strafe_ticks = Strafe.get_value();
+        final_theta = inertial_sensor.get_yaw();
 
-    //update global variables
-    x_pos += global_x;
-    y_pos += global_y;
-    theta = final_theta;
+        //convert to inches
+        delta_y = ticksToInches(lat_ticks);
+        delta_x = ticksToInches(strafe_ticks);
 
-    //update previous values
-    prev_lat_ticks = lat_ticks;
-    prev_strafe_ticks = strafe_ticks;
+        //change in heading in radians
+        delta_theta = (final_theta * RADIANS) - theta;
 
-    //delay
-    pros::delay(20);
+        //update global position
+        x_pos += (delta_x * cos(theta)) - (delta_y * sin(theta));
+        y_pos += (delta_x * sin(theta)) + (delta_y * cos(theta));
+        theta += delta_theta;
+
+        pros::delay(20);
+    }
 }
