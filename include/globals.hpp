@@ -6,9 +6,9 @@
 extern pros::MotorGroup left_mg;
 extern pros::MotorGroup right_mg;
 
-//odom Encoders
-extern pros::adi::Encoder Lateral;
-extern pros::adi::Encoder Strafe;
+//odom rotation sensors
+extern pros::Rotation Strafe;
+extern pros::Rotation Lateral;
 
 //odom inertial sensor
 extern pros::Imu inertial_sensor;

@@ -31,8 +31,8 @@ void odomtask(){
 
     while (true) {
         //get current sensor values
-        lat_ticks = Lateral.get_value();
-        strafe_ticks = Strafe.get_value();
+        lat_ticks = Lateral.get_position();
+        strafe_ticks = Strafe.get_position();
         final_theta = inertial_sensor.get_yaw();
 
         //convert to inches
