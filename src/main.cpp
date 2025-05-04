@@ -4,13 +4,15 @@
 #include "ODOM.hpp"
 #include "pros/misc.hpp"
 #include "pros/rotation.hpp"
+#include "PID.hpp"
 
 
 
 void initialize() {
 	pros::lcd::initialize();
 	pros::Task odom([](void*) { odom_task(); }, (void *)"odom_task");
-	pros::lcd::print(0, "Reset in odom_task: %d", Strafe.get_position());
+
+	pros::Task pid([](void*) { PID_task(); }, (void *)"PID_task");
 	pros::delay(1000);
 }
 
@@ -24,6 +26,7 @@ void opcontrol() {
 
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	while (true) {
+		enable_drivePID = true; // Enable PID control for manual operation	
 		// Drive Control (tank drive)
 		
 ////////////////////////////////////////////////////////////////

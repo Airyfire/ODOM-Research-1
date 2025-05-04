@@ -15,13 +15,13 @@ double delta_y_rotated = 0;
 
 // defining constants for odom
 #define WHEEL_DIAMETER 2.75
-#define CENT_PER_REV 36000
+#define DEG_PER_REV 360.0
 #define DIST_FROM_CENT 2.5
 #define RADIANS (M_PI/180.0)
 // ticks to inches converter
-double centiToInches(double centidegrees) {
+double degtoinch(double degrees) {
     // Convert centidegrees to inches
-    return (centidegrees / CENT_PER_REV) * WHEEL_DIAMETER * M_PI;
+    return (degrees / DEG_PER_REV) * WHEEL_DIAMETER * M_PI;
 }
 
 void odom_task(){
@@ -48,8 +48,8 @@ void odom_task(){
 
 
         //Convert centidegrees to inches
-        strafe_inch = centiToInches(strafe_pos);
-        lateral_inch = centiToInches(lateral_pos);
+        strafe_inch = degtoinch(strafe_pos);
+        lateral_inch = degtoinch(lateral_pos);
 
 
         // Calculate the change in x and y positions
@@ -63,10 +63,6 @@ void odom_task(){
         // Update the robot's position
         x_pos += delta_x_rotated;
         y_pos += delta_y_rotated;
-
-        // Print the robot's position to the LCD
-        pros::lcd::print(1, "X Position: %f", x_pos);
-        pros::lcd::print(2, "Y Position: %f", y_pos);
 
 
         pros::delay(20); // Delay to prevent overloading the CPU
