@@ -1,52 +1,76 @@
 #include "globals.hpp"
+#include <cmath>
+
 
 //robot positions
 double x_pos = 0;
 double y_pos = 0;
 double theta = 0;
 
+double strafe_inch = 0;
+double lateral_inch = 0;
+
+double delta_x_rotated = 0;
+double delta_y_rotated = 0;
+
 // defining constants for odom
 #define WHEEL_DIAMETER 2.75
-#define TICKS_PER_REV 360
+#define CENT_PER_REV 36000
 #define DIST_FROM_CENT 2.5
-#define RADIANS M_PI/180
+#define RADIANS (M_PI/180.0)
 // ticks to inches converter
-double ticksToInches(double ticks) {
-    return (ticks / TICKS_PER_REV) * WHEEL_DIAMETER * M_PI;
+double centiToInches(double centidegrees) {
+    // Convert centidegrees to inches
+    return (centidegrees / CENT_PER_REV) * WHEEL_DIAMETER * M_PI;
 }
 
-// odom task
-void odomtask(){
-    //initializing variables
-    double lat_ticks = 0;
-    double strafe_ticks = 0;
-    double final_theta = 0;
+void odom_task(){
+    // Reset the position of rotation sensors
+    Strafe.reset_position(); 
+    Lateral.reset_position();
 
-    //conversion to inches
-    double delta_y = 0;
-    double delta_x = 0;
-    
-    //change in heading in radians
-    double delta_theta = 0;
+    // Reset the angle of the inertial sensor
+    inertial_sensor.reset();
+    pros::delay(2000);
 
     while (true) {
-        //get current sensor values
-        lat_ticks = Lateral.get_position();
-        strafe_ticks = Strafe.get_position();
-        final_theta = inertial_sensor.get_yaw();
+        // Get the previous positions of the strafe and lateral motors
+        double prev_strafe = strafe_inch;
+        double prev_lateral = lateral_inch;
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Get the current position of the strafe motor
+        double strafe_pos = Strafe.get_position();
+        // Get the current position of the lateral motor
+        double lateral_pos = Lateral.get_position();
+        // Get the current angle of the inertial sensor
+        theta = inertial_sensor.get_rotation() * RADIANS;
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //convert to inches
-        delta_y = ticksToInches(lat_ticks);
-        delta_x = ticksToInches(strafe_ticks);
 
-        //change in heading in radians
-        delta_theta = (final_theta * RADIANS) - theta;
+        //Convert centidegrees to inches
+        strafe_inch = centiToInches(strafe_pos);
+        lateral_inch = centiToInches(lateral_pos);
 
-        //update global position
-        x_pos += (delta_x * cos(theta)) - (delta_y * sin(theta));
-        y_pos += (delta_x * sin(theta)) + (delta_y * cos(theta));
-        theta += delta_theta;
 
-        pros::delay(20);
+        // Calculate the change in x and y positions
+        double delta_x = strafe_inch - prev_strafe;
+        double delta_y = lateral_inch - prev_lateral;
+
+        // Calculate the change in x and y positions based on the angle
+        delta_x_rotated = (delta_x * cos(int(theta)) - delta_y * sin(int(theta)));
+        delta_y_rotated = (delta_x * sin(int(theta)) + delta_y * cos(int(theta)));
+
+        // Update the robot's position
+        x_pos += delta_x_rotated;
+        y_pos += delta_y_rotated;
+
+        // Print the robot's position to the LCD
+        pros::lcd::print(1, "X Position: %f", x_pos);
+        pros::lcd::print(2, "Y Position: %f", y_pos);
+
+
+        pros::delay(20); // Delay to prevent overloading the CPU
+
+                        
     }
 }
