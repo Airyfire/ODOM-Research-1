@@ -28,6 +28,8 @@ void opcontrol() {
 	while (true) {
 		enable_drivePID = true; // Enable PID control for manual operation	
 		// Drive Control (tank drive)
+
+		move_to_pos(5,5,10);
 		
 ////////////////////////////////////////////////////////////////
 		//Odom test
