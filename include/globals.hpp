@@ -7,8 +7,13 @@ extern pros::MotorGroup left_mg;
 extern pros::MotorGroup right_mg;
 
 //odom rotation sensors
-extern pros::Rotation Strafe;
-extern pros::Rotation Lateral;
+extern pros::Rotation perpendicular;
+extern pros::Rotation parallel;
 
 //odom inertial sensor
 extern pros::Imu inertial_sensor;
+
+// intake motors
+extern pros::Motor top_motor;
+extern pros::Motor mid_goal_motor;
+extern pros::Motor bottom_goal_motor;

@@ -1,3 +1,4 @@
+/*
 #include "globals.hpp"
 #include <cmath>
 
@@ -7,16 +8,17 @@ double x_pos = 0;
 double y_pos = 0;
 double theta = 0;
 
-double strafe_inch = 0;
-double lateral_inch = 0;
+double perpendicular_inch = 0; // odom pod perpendicular to wheels of chassis
+double parallel_inch = 0; // odom pod parallel to wheels of chassis
 
-double dx_global = 0;
-double dy_global = 0;
+double dx = 0;
+double dy = 0;
 
 // defining constants for odom
 #define WHEEL_DIAMETER 2.75
 #define DEG_PER_REV 360.0
-#define DIST_FROM_CENT 2.5
+#define DIST_FROM_CENT_PARALLEL 2.5 //inches
+#define DIST_FROM_CENT_PERPENDICULAR 2.0 //inches
 #define RADIANS (M_PI/180.0)
 // ticks to inches converter
 double degtoinch(double degrees) {
@@ -24,44 +26,39 @@ double degtoinch(double degrees) {
     return (degrees / DEG_PER_REV) * WHEEL_DIAMETER * M_PI;
 }
 
-void update_odom(){
-    // Reset the position of rotation sensors
-    Strafe.reset_position(); 
-    Lateral.reset_position();
-
-    // Reset the angle of the inertial sensor
+void reset_odom(){
+    // Reset the odometry sensors to zero
+    perpendicular.reset();
+    parallel.reset();
     inertial_sensor.reset();
-    pros::delay(2000);
-    // Get the previous positions of the strafe and lateral motors
-    double prev_strafe = strafe_inch;
-    double prev_lateral = lateral_inch;
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Get the current position of the strafe motor
-    double strafe_pos = Strafe.get_position();
-    // Get the current position of the lateral motor
-    double lateral_pos = Lateral.get_position();
-    // Get the current angle of the inertial sensor
+    pros::delay(50); // Delay to ensure sensors are reset
+    perpendicular_inch = 0;
+    parallel_inch = 0;
+    x_pos = 0;
+    y_pos = 0;
+    theta = 0;
+}
+
+void update_odom(){
+    // First things first, set previous values to previous current values
+    double prev_perpendicular = perpendicular_inch;
+    double prev_parallel = parallel_inch;
+
+    // Get the current values from odom sensors in inches
+    perpendicular_inch = degtoinch(perpendicular.get_position());
+    parallel_inch = degtoinch(parallel.get_position());
+
+    // get theta in radians
     theta = inertial_sensor.get_rotation() * RADIANS;
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // Use formulas for y coordinate: y = 2((dy/theta) + dist_from_cent_parallel)(sin(theta/2))
+    dy = parallel_inch - prev_parallel;
+    y_pos += 2 * ((dy/theta) + DIST_FROM_CENT_PARALLEL) * sin(theta/2);
 
-    //Convert centidegrees to inches
-    strafe_inch = degtoinch(strafe_pos);
-    lateral_inch = degtoinch(lateral_pos);
+    // Use formulas for x coordinate: x = 2((dx/theta) + dist_from_cent_perpendicular)(sin(theta/2))
+    dx = perpendicular_inch - prev_perpendicular;
+    x_pos += 2 * ((dx/theta) + DIST_FROM_CENT_PERPENDICULAR) * sin(theta/2);
 
-
-    // Calculate the change in x and y positions
-    double delta_x = strafe_inch - prev_strafe;
-    double delta_y = lateral_inch - prev_lateral;
-
-    // Calculate the change in x and y positions based on the angle
-    dy_global = (delta_x * cos(int(theta)) - delta_y * sin(int(theta)));
-    dy_global = (delta_x * sin(int(theta)) + delta_y * cos(int(theta)));
-
-
-    // Update the robot's position
-    x_pos += dx_global;
-    y_pos += dy_global;
 
 
     pros::delay(20); // Delay to prevent overloading the CPU
@@ -78,3 +75,4 @@ int odom_task() {
     }
     return 0;
 }
+*/

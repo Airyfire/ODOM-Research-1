@@ -1,7 +1,8 @@
+/*
 #include "ODOM.hpp"
 #include "globals.hpp"
 
-#define WHEEL_DIAMETER 2.75
+#define WHEEL_DIAMETER 3.25
 #define GEAR_RATIO 1.0
 #define TRACK_WIDTH 0.0 // Distance between the left and right wheels in inches
 
@@ -51,7 +52,7 @@ int PID_task(){
 	while (true) {
 		if (enable_drivePID) {
 			// Calculate the error between the target and current position
-			error = target - sqrt(pow(delta_x_rotated, 2) + pow(delta_y_rotated, 2));
+			error = target - sqrt(pow(dx, 2) + pow(dy, 2));
 			integral += error; // Accumulate the integral term
 			derivative = error - lastError; // Calculate the derivative term
 			lastError = error; // Update last error for next iteration
@@ -62,10 +63,6 @@ int PID_task(){
 			turn_derivative = turn_error - turn_lastError; // Calculate the derivative term for turning
 			turn_lastError = turn_error; // Update last error for next iteration
 
-			pros::lcd::print(0, "Error: %f", error); // Print the error to the LCD
-			pros::lcd::print(1, "Turn Error: %f", turn_error); // Print the turn error to the LCD
-			pros::lcd::print(2, "X Position: %f", x_pos); // Print the X position to the LCD
-			pros::lcd::print(3, "Y Position: %f", y_pos); // Print the Y position to the LCD
 			pros::delay(20); // Delay to prevent overloading the CPU
 
 			// Calculate the PID output for driving
@@ -105,3 +102,4 @@ void move_to_pos(double target_x, double target_y, double target_angle) {
 }
 
 
+*/
